@@ -9,9 +9,10 @@
 /README.md          export-ignore
 /project.godot      export-ignore
 /icon.png           export-ignore
+/icon.png.import    export-ignore
 /icon.svg           export-ignore
-/Images/* export-ignore
+/Images/ export-ignore
 CSharpScriptPicker.sln export-ignore
 /CSharpScriptPicker.csproj* export-ignore
 /default_env.tres export-ignore
-/ExampleScriptFolder/* export-ignore
+/ExampleScriptFolder/ export-ignore
