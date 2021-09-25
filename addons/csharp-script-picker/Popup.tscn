@@ -1,0 +1,57 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/csharp-script-picker/ScriptPickerPopup.cs" type="Script" id=1]
+
+[node name="Node" type="PopupDialog"]
+visible = true
+margin_right = 200.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 250, 300 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+containerPath = NodePath("MarginContainer/BaseContainer/ScrollContainer/ContentContainer")
+searchFieldPath = NodePath("MarginContainer/BaseContainer/SearchField")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/margin_right = 5
+custom_constants/margin_top = 5
+custom_constants/margin_left = 5
+custom_constants/margin_bottom = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BaseContainer" type="VBoxContainer" parent="MarginContainer"]
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 245.0
+margin_bottom = 295.0
+
+[node name="SearchField" type="LineEdit" parent="MarginContainer/BaseContainer"]
+margin_right = 240.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+clear_button_enabled = true
+placeholder_text = "Search"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/BaseContainer"]
+margin_top = 28.0
+margin_right = 240.0
+margin_bottom = 290.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+scroll_horizontal_enabled = false
+
+[node name="ContentContainer" type="VBoxContainer" parent="MarginContainer/BaseContainer/ScrollContainer"]
+margin_right = 240.0
+size_flags_horizontal = 3
+custom_constants/separation = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}

@@ -1,0 +1,34 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[node name="NamespaceButton" type="Button"]
+margin_top = 57.0
+margin_right = 192.0
+margin_bottom = 79.0
+rect_min_size = Vector2( 0, 22 )
+focus_mode = 0
+shortcut_in_tooltip = false
+flat = true
+clip_text = true
+align = 0
+expand_icon = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -17.0
+grow_vertical = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+custom_styles/normal = SubResource( 1 )
+text = ">"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
