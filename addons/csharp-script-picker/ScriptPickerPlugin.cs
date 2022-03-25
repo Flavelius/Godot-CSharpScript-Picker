@@ -1,7 +1,5 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
-using Godot;
-using Godot.Collections;
 
 namespace CSharpScriptPicker
 {
@@ -25,25 +23,25 @@ namespace CSharpScriptPicker
 
         public static void RegisterSettings()
         {
-            AddBoolSetting(SortByNamespaceSettingName, SortByNamespaceSettingPath, true, true);
-            AddBoolSetting(LogErrorsAndWarningsSettingName, LogErrorsAndWarningsSettingPath, false, true);
-            AddStringArraySetting(IgnoredTypeSettingName, IgnoredTypeSettingPath, new string[0]);
-            AddStringArraySetting(IgnoredPathsSettingName, IgnoredPathsSettingPath, new[] { "res://addons/*" });
+            AddBoolSetting(SortByNamespaceSettingPath, true, true);
+            AddBoolSetting(LogErrorsAndWarningsSettingPath, false, true);
+            AddStringArraySetting(IgnoredTypeSettingPath, new string[0]);
+            AddStringArraySetting(IgnoredPathsSettingPath, new[] { "res://addons/*" });
             
-            void AddBoolSetting(string name, string path, bool defaultValue, bool initialValue)
+            void AddBoolSetting(string path, bool defaultValue, bool initialValue)
             {
                 var propInfoDict = new Dictionary();
-                propInfoDict["name"] = name;
+                propInfoDict["name"] = path;
                 propInfoDict["type"] = Variant.Type.Bool;
                 ProjectSettings.SetSetting(path, defaultValue);
                 ProjectSettings.AddPropertyInfo(propInfoDict);
                 ProjectSettings.SetInitialValue(path, initialValue);
             }
 
-            void AddStringArraySetting(string name, string path, string[] defaultValue)
+            void AddStringArraySetting(string path, string[] defaultValue)
             {
                 var propInfoDict = new Dictionary();
-                propInfoDict["name"] = name;
+                propInfoDict["name"] = path;
                 propInfoDict["type"] = Variant.Type.StringArray;
                 ProjectSettings.SetSetting(path, defaultValue);
                 ProjectSettings.AddPropertyInfo(propInfoDict);
