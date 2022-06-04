@@ -139,7 +139,9 @@ namespace CSharpScriptPicker
                             btn.Text = buttonNode.Path;
                             break;
                         case ScriptMenuTreeNode.EntryTypes.TypeName:
-                            btn.Text = buttonNode.Path.Split(namespaceSplitChar, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+	                        var pathParts = buttonNode.Path.Split(namespaceSplitChar, StringSplitOptions.RemoveEmptyEntries); 
+                            btn.Text = pathParts.LastOrDefault();
+	                        btn.HintTooltip = pathParts.Length > 0 ? string.Join("/", pathParts.Take(pathParts.Length - 1)) : string.Empty;
                             break;
                         default:
                             btn.Text = Path.GetFileNameWithoutExtension(buttonNode.Path);
