@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Godot;
 using Godot.Collections;
 using Array = Godot.Collections.Array;
@@ -44,7 +43,6 @@ namespace CSharpScriptPicker
             searchField = GetNode<LineEdit>(searchFieldPath);
             searchField.RightIcon = GetIcon("Search", "EditorIcons");
             searchField.Connect("text_changed", this, nameof(OnSearchTextChanged));
-            searchField.CallDeferred("release_focus");
             menuTreeNode = ScriptMenuTreeNode.CreateTree(target is Node ? typeof(Node) : target is Resource ? typeof(Resource) : throw new Exception("Invalid target"),
                 ScriptPickerPlugin.ShouldSortByNamespace, ScriptPickerPlugin.IgnoredTypes, ScriptPickerPlugin.IgnoredPaths);
             SetDisplayedNode(menuTreeNode);
@@ -90,7 +88,19 @@ namespace CSharpScriptPicker
             var boldFont = GetFont("bold", "EditorFonts");
             if (node.Parent != null)
             {
-                AddButtonEntryFor(resources.BackButton, node.Parent, nameOverride: node.Path, fontOverride: boldFont);
+	            var parent = node.Parent;
+	            var pathName = node.Path;
+	            var tt = node.Path;
+	            while (parent != null)
+	            {
+		            var pName = Path.GetFileNameWithoutExtension(parent.Path);
+		            if (!string.IsNullOrEmpty(pName))
+		            {
+			            tt = pName + "/" + tt;
+		            }
+		            parent = parent.Parent;
+	            }
+	            AddButtonEntryFor(resources.BackButton, node.Parent, nameOverride: pathName, fontOverride: boldFont, tooltip: tt);
             }
             else
             {
@@ -98,8 +108,8 @@ namespace CSharpScriptPicker
             }
             if (node.Entries.Count > 0)
             {
-                var namespaceEntries = node.Entries.Where(e => e.Type == ScriptMenuTreeNode.EntryTypes.SubSection).ToArray();
-                var scriptEntries = node.Entries.Where(e => e.Type == ScriptMenuTreeNode.EntryTypes.ScriptPath || e.Type == ScriptMenuTreeNode.EntryTypes.TypeName);
+                var namespaceEntries = node.Entries.Where(e => e.Type == ScriptMenuTreeNode.EntryTypes.SubSection).OrderBy(e => e.Path).ToArray();
+                var scriptEntries = node.Entries.Where(e => e.Type == ScriptMenuTreeNode.EntryTypes.ScriptPath || e.Type == ScriptMenuTreeNode.EntryTypes.TypeName).OrderBy(s => s.Path);
                 if (namespaceEntries.Length > 0)
                 {
                     for (int i = 0; i < namespaceEntries.Length; i++)
@@ -114,10 +124,11 @@ namespace CSharpScriptPicker
                 }
             }
             displayedNode = node;
-            void AddButtonEntryFor(PackedScene prefab, ScriptMenuTreeNode buttonNode, Texture icon = null, string nameOverride = null, bool hideDirectionLabel = false, Font fontOverride = null)
+            void AddButtonEntryFor(PackedScene prefab, ScriptMenuTreeNode buttonNode, Texture icon = null, string nameOverride = null, bool hideDirectionLabel = false, Font fontOverride = null, string tooltip = null)
             {
                 var btn = prefab.Instance<Button>();
-                btn.Name = Path.GetFileNameWithoutExtension(buttonNode.Path);
+                btn.Name = "Entry_" + Path.GetFileNameWithoutExtension(buttonNode.Path);
+                if (!string.IsNullOrEmpty(tooltip)) btn.HintTooltip = tooltip;
                 btn.SetMeta(MetaIdentifier, buttonNode.Guid.ToString());
                 if (fontOverride != null) btn.AddFontOverride("font", fontOverride);
                 if (nameOverride == null)
@@ -231,7 +242,7 @@ namespace CSharpScriptPicker
 
             public static ScriptMenuTreeNode CreateTree(Type inheritanceTypeMatch, bool sortByNamespace, string[] typeFilterExpressions, string[] pathFilterExpressions)
             {
-                var root = new ScriptMenuTreeNode("Root", EntryTypes.SubSection);
+                var root = new ScriptMenuTreeNode(string.Empty, EntryTypes.SubSection);
                 if (sortByNamespace)
                 {
                     TryCreateNamespaceBasedTree(root, inheritanceTypeMatch, typeFilterExpressions, pathFilterExpressions);
@@ -321,6 +332,10 @@ namespace CSharpScriptPicker
                         {
                             if (ScriptPickerPlugin.EnableLogging) GD.PushWarning($"Error locating type of script in assembly ({className}) -> will not be listed in script picker");
                             continue;
+                        }
+                        if (type.IsAbstract || type.IsGenericType)
+                        {
+	                        continue;
                         }
                         var script = ResourceLoader.Load<CSharpScript>(scriptPath);
                         if (script == null)
